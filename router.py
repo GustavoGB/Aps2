@@ -1,24 +1,14 @@
-from flask import Flask, escape, request, jsonify,redirect
+from flask import Flask, escape, request, jsonify
 import requests
 import os,sys
 
 app = Flask(__name__)
 
-
-@app.route('/')
-def hello():
-    #redirecionar para o Ip alocado da máquina
-    return redirect("", code=302)
-
-key = "endpoint"
-server = os.getenv(key)
-task = sys.argv[1]
-tasks = ["post","get","find","delete","put"]
-
+ip_bancoDados = os.environ.get("IPbancoDados")
 
 @app.route('/Tarefa/',methods=['GET'])
 def getTasks():
-    r = requests.get(server+"Tarefa/")
+    r = requests.get(ip_bancoDados+"Tarefa/")
     return r.json()
 
 @app.route('/Tarefa/',methods=['POST'])
@@ -30,13 +20,13 @@ def postTasks():
     data = { 'name':name ,
             'description': description
     }
-    r = requests.post(server+"Tarefa/", data = data)
+    r = requests.post(ip_bancoDados+"Tarefa/", data = data)
     return r.content
 
 @app.route('/Tarefa/<name>',methods=['GET'])
 def getTasksID(name):
     id = sys.argv[2]
-    r = requests.get(server+"Tarefa/" + id)
+    r = requests.get(ip_bancoDados+"Tarefa/" + id)
     if(r.status_code == "200"):
         return "" 
     else:
@@ -51,7 +41,7 @@ def updateTask(name):
     data = { 'name':name ,
             'description': description
     }
-    r = requests.put(server+"Tarefa/" + id,data = data)
+    r = requests.put(ip_bancoDados+"Tarefa/" + id,data = data)
 
     if(r.status_code == "200"):
         return "Updated" 
@@ -62,7 +52,7 @@ def updateTask(name):
 def deleteTask(name):
 
     id = sys.argv[2]
-    r = requests.delete(server+"Tarefa/" + id)
+    r = requests.delete(ip_bancoDados+"Tarefa/" + id)
     if(r.status_code == "200"):
         return "Deleted" 
     else:
